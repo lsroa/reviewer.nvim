@@ -32,7 +32,7 @@ M.jump = function(direction)
         prev_line = lines[i + 1 * direction]
       elseif cursor == lines[#lines] then
         prev_line = lines[1]
-      else
+      elseif cursor == lines[1] then
         prev_line = lines[#lines]
       end
     end
