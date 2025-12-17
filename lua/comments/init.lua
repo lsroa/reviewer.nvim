@@ -6,6 +6,8 @@ local utils = require('comments.utils')
 local telescope_utils = require("comments.telescope")
 local gh = require('comments.gh')
 
+local namespace = vim.api.nvim_create_namespace("gh-comments")
+
 
 M.jump = function(direction)
   local file, cursor = utils.get_position()
@@ -46,11 +48,11 @@ local place_signs = function()
   local threads = store.get_threads_by_file(file)
   if threads then
     for _, thread in pairs(threads) do
-      vim.fn.sign_place(0,
-        'Comments',
-        'GithubComment',
-        vim.api.nvim_get_current_buf(),
-        { lnum = thread.originalLine, priority = 100 })
+      vim.api.nvim_buf_set_extmark(0, namespace, thread.originalLine - 1, 0, {
+        sign_hl_group = 'GithubComment',
+        sign_text = '💬',
+        priority = 100,
+      })
     end
   end
 end
@@ -107,10 +109,6 @@ M.setup = function()
   gh.fetch_comments()
   gh.fetch_files()
 
-  -- Register signs
-  vim.fn.sign_define('GithubComment', { text = '💬' })
-  vim.fn.sign_define('GithubResolvedComment', { text = '✅' })
-
 
   -- Register autocommands
   vim.api.nvim_create_autocmd('User', {
@@ -118,9 +116,7 @@ M.setup = function()
     callback = place_signs,
   })
   vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
-    callback = function()
-      place_signs()
-    end
+    callback = place_signs,
   })
 
   -- Define commands
