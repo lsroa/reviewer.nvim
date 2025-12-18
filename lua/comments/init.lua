@@ -4,7 +4,9 @@ local store = require('comments.store')
 local render = require('comments.render')
 local utils = require('comments.utils')
 local telescope_utils = require("comments.telescope")
+local fzf_utils = require("comments.fzf-lua")
 local gh = require('comments.gh')
+local git = require('comments.git')
 
 local namespace = vim.api.nvim_create_namespace("gh-comments")
 
@@ -107,7 +109,7 @@ end
 M.setup = function()
   -- Fecth data
   gh.fetch_comments()
-  gh.fetch_files()
+  git.fetch_files()
 
 
   -- Register autocommands
@@ -124,7 +126,7 @@ M.setup = function()
   vim.api.nvim_create_user_command('GHNext', function() M.jump(1) end, { bar = true })
   vim.api.nvim_create_user_command('GHPrev', function() M.jump(-1) end, { bar = true })
   vim.api.nvim_create_user_command('OpenComment', M.open_comment, {})
-  vim.api.nvim_create_user_command('GHComments', telescope_utils.list_comments, {})
+  vim.api.nvim_create_user_command('GHComments', fzf_utils.list_comments, {})
   vim.api.nvim_create_user_command('GHFiles', telescope_utils.list_pr_files, {})
   vim.api.nvim_create_user_command('GHThreads', function()
     local file = utils.get_position()
