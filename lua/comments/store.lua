@@ -47,7 +47,9 @@ function M.get_threads_by_file(file)
   end
   local thread_list = {}
   for _, thread in pairs(threads[file]) do
-    table.insert(thread_list, thread)
+    if not thread.isResolved then
+      table.insert(thread_list, thread)
+    end
   end
   return thread_list
 end
