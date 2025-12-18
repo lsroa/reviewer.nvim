@@ -8,12 +8,13 @@ local files = {}
 --- @type table<path,{[line]: Thread}>
 local threads = {}
 
+--- @param new_files string[];
 function M.set_files(new_files)
   files = {}
   for _, file in ipairs(new_files) do
     vim.schedule(function()
-      if vim.fn.filereadable(file.path) == 1 then
-        table.insert(files, file.path)
+      if vim.fn.filereadable(file) == 1 then
+        table.insert(files, file)
       end
     end)
   end
