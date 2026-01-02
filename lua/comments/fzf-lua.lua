@@ -103,8 +103,8 @@ M.list_pr_files = function()
       end,
       ["ctrl-v"] = function(selected, _)
         for _, entry in ipairs(files) do
-          if entry.text == selected[1] then
-            vim.cmd("vs " .. entry.file)
+          if entry.filename == selected[1] then
+            vim.cmd("vs " .. entry.filename)
             return
           end
         end
