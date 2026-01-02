@@ -106,7 +106,8 @@ M.show_comment = function()
 end
 
 
-M.setup = function()
+M.setup = function(input_opts)
+  local opts = input_opts or {}
   -- Fecth data
   gh.fetch_comments()
   git.fetch_files()
@@ -126,8 +127,13 @@ M.setup = function()
   vim.api.nvim_create_user_command('GHNext', function() M.jump(1) end, { bar = true })
   vim.api.nvim_create_user_command('GHPrev', function() M.jump(-1) end, { bar = true })
   vim.api.nvim_create_user_command('OpenComment', M.open_comment, {})
-  vim.api.nvim_create_user_command('GHComments', fzf_utils.list_comments, {})
-  vim.api.nvim_create_user_command('GHFiles', telescope_utils.list_pr_files, {})
+  if opts.provider == "fzf-lua" then
+    vim.api.nvim_create_user_command('GHComments', fzf_utils.list_comments, {})
+    vim.api.nvim_create_user_command('GHFiles', fzf_utils.list_pr_files, {})
+  else
+    vim.api.nvim_create_user_command('GHComments', telescope_utils.list_comments, {})
+    vim.api.nvim_create_user_command('GHFiles', telescope_utils.list_pr_files, {})
+  end
   vim.api.nvim_create_user_command('GHThreads', function()
     local file = utils.get_position()
     vim.print(store.get_threads_by_file(file))
