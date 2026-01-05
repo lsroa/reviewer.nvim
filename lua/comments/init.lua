@@ -48,6 +48,7 @@ end
 local place_signs = function()
   local file, _ = utils.get_position()
   local threads = store.get_threads_by_file(file)
+  vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
   if threads then
     for _, thread in pairs(threads) do
       vim.api.nvim_buf_set_extmark(0, namespace, thread.originalLine - 1, 0, {
