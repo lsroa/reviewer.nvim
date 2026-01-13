@@ -8,7 +8,7 @@ local fzf_utils = require("comments.fzf-lua")
 local gh = require('comments.gh')
 local git = require('comments.git')
 
-local namespace = vim.api.nvim_create_namespace("gh-comments")
+local namespace = vim.api.nvim_create_namespace("reviewer.nvim")
 
 
 M.jump = function(direction)
@@ -48,14 +48,28 @@ end
 local place_signs = function()
   local file, _ = utils.get_position()
   local threads = store.get_threads_by_file(file)
+  local hunks_by_file = store.get_hunks()
+
   vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
+
   if threads then
     for _, thread in pairs(threads) do
       vim.api.nvim_buf_set_extmark(0, namespace, thread.originalLine - 1, 0, {
-        sign_hl_group = 'GithubComment',
         sign_text = '💬',
         priority = 100,
       })
+    end
+  end
+
+  if hunks_by_file[file] then
+    for _, hunk in pairs(hunks_by_file[file]) do
+      for lnum = hunk.new_start, hunk.new_start + hunk.new_count - 1 do
+        vim.api.nvim_buf_set_extmark(0, namespace, lnum - 1, 0, {
+          sign_text = "┃",
+          sign_hl_group = 'FeatureDiffAdd',
+          priority = 50,
+        })
+      end
     end
   end
 end
@@ -142,11 +156,15 @@ M.setup = function(input_opts)
     callback = place_signs,
   })
 
+  -- Define HL groups
+  vim.api.nvim_set_hl(0, "FeatureDiffAdd", { fg = "#cba6f7" })
+
   -- Define commands
   vim.api.nvim_create_user_command('ShowComment', M.show_comment, {})
   vim.api.nvim_create_user_command('GHNext', function() M.jump(1) end, { bar = true })
   vim.api.nvim_create_user_command('GHPrev', function() M.jump(-1) end, { bar = true })
   vim.api.nvim_create_user_command('OpenComment', M.open_comment, {})
+  vim.api.nvim_create_user_command('GHCreateComment', function() utils.open_text_box() end, {})
   if opts.provider == "fzf-lua" then
     vim.api.nvim_create_user_command('GHComments', fzf_utils.list_comments, {})
     vim.api.nvim_create_user_command('GHFiles', fzf_utils.list_pr_files, {})
