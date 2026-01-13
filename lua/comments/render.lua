@@ -15,7 +15,6 @@ local function render_comment(comment, max_width)
     if #comment_line > max_width then
       lines_with_extra_line = lines_with_extra_line + 1
       extra_space_for_extra_line = 1
-      -- TODO add an extra space at 120 of the coomment
     end
     table.insert(block, ' ' .. comment_line .. ' ')
     width = math.max(width, #comment_line + 2 + extra_space_for_extra_line)

@@ -23,16 +23,6 @@ local function parse_thread(result)
   end
 end
 
-M.fetch_files = function()
-  vim.system({ "gh", "pr", "view", "--json", "files" }, { text = true }, function(out)
-    if out.code ~= 0 then
-      return
-    end
-    local files = vim.json.decode(out.stdout).files
-    store.set_files(files)
-  end)
-end
-
 M.fetch_comments = function()
   local repo = nil
   local pr = nil

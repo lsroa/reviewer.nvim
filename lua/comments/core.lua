@@ -26,6 +26,7 @@ M.Thread = {}
 --- @field isResolved boolean
 --- @field originalLine integer
 --- @field path string
+
 --- @param comments Comment[]
 --- @param isResolved boolean
 --- @param originalLine integer
@@ -39,5 +40,7 @@ function M.Thread.new(comments, isResolved, originalLine, path)
     path = path,
   }
 end
+
+--- @alias Hunk {old_start: integer, old_count: integer, new_start: integer, new_count: integer}
 
 return M

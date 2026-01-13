@@ -1,29 +1,26 @@
+local utils = require("comments.utils")
 M = {}
 
---- @type string[]
-local files = {}
+--- @type table<path,Hunk[]>
+local hunks = {}
+
+M.set_hunks = function(new_hunks)
+  hunks = new_hunks
+end
+
+M.get_hunks = function()
+  return hunks
+end
+
+--- @return string[]
+function M.get_files()
+  return utils.keys(hunks)
+end
 
 --- @alias path string
 --- @alias line string
 --- @type table<path,{[line]: Thread}>
 local threads = {}
-
---- @param new_files string[];
-function M.set_files(new_files)
-  files = {}
-  for _, file in ipairs(new_files) do
-    vim.schedule(function()
-      if vim.fn.filereadable(file) == 1 then
-        table.insert(files, file)
-      end
-    end)
-  end
-end
-
---- @return string[]
-function M.get_files()
-  return files
-end
 
 --- @return table<path,{[line]: Thread}>
 function M.get_threads()
