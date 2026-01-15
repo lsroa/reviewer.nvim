@@ -19,7 +19,7 @@ M.list_comments = function()
           end
 
           local ext = string.gsub(file, "^.*%.", "")
-          local icon, color = icons.get_icon_color(file, ext)
+          local icon, color = icons.get_icon_color(file, ext, { default = true })
           local colored_icon = utils.ansi_from_rgb(color, icon)
 
           local entry = string.format("%s %s:%d %s - %s",
@@ -78,7 +78,7 @@ M.list_pr_files = function()
   for _, file in pairs(store.get_files()) do
     local ext = vim.fn.fnamemodify(file, ":e")
     local tail = vim.fn.fnamemodify(file, ":t")
-    local icon, color = icons.get_icon_color(file, ext)
+    local icon, color = icons.get_icon_color(file, ext, { default = true })
     local colored_icon = utils.ansi_from_rgb(color, icon)
 
     table.insert(files, {
